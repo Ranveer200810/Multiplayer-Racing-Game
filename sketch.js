@@ -1,53 +1,35 @@
-var hypnoticBall, database;
-var position;
+var database;
+var form, playerCnt, player, game;
+var gameState = 0;
+var car1, car2, car3, car4;
 
+var allPlayers;
+var cars = [];
 
 function setup(){
+
   database = firebase.database();
-  console.log(database);
-  createCanvas(500,500);
+  createCanvas(displayWidth - 20, displayHeight - 30);
 
-  hypnoticBall = createSprite(250,250,10,10);
-  hypnoticBall.shapeColor = "red";
+  game = new Game();
+  game.getGameState();
+  game.start();
 
-
-  var hypnoticBallPosition = database.ref('ball/position');
-  hypnoticBallPosition.on("value", readPosition, showError);
 }
 
 function draw(){
-  background("white");
-  
-    if(keyDown(LEFT_ARROW)){
-      writePosition(-1,0);
-    }
-    else if(keyDown(RIGHT_ARROW)){
-      writePosition(1,0);
-    }
-    else if(keyDown(UP_ARROW)){
-      writePosition(0,-1);
-    }
-    else if(keyDown(DOWN_ARROW)){
-      writePosition(0,+1);
-    }
-    drawSprites();
-  
-}
 
-function writePosition(x,y){
-  database.ref('ball/position').set({
-    'x': position.x + x ,
-    'y': position.y + y
-  })
-}
+  if (playerCnt === 4) {
 
-function readPosition(data){
-  position = data.val();
-  console.log(position.x);
-  hypnoticBall.x = position.x;
-  hypnoticBall.y = position.y;
-}
+    game.updateState(1);
 
-function showError(){
-  console.log("Error in writing to the database");
+  }
+
+  if (gameState === 1) {
+
+    clear();
+    game.play();
+
+  }
+
 }
